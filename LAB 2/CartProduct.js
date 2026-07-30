@@ -1,0 +1,86 @@
+import readline from "readline/promises"
+import {stdin, stdout} from "process";
+import {readFile, writeFile} from "fs/promises";
+
+// Database using file starts
+const FILE = "product.json";
+
+const getCart = async () => {
+    const data = await readFile (FILE, "utf-8")
+    return JSON.parse(data);
+};
+
+const saveCart = async (cart) => {
+    await writeFile(FILE, JSON.stringify(cart, null, 2));
+};
+
+const addToCart = async (product) => {
+    const cart = await getCart();
+    const isFonundInCart = cart.find((item) => item.id === product.id);
+    if (isFonundInCart){
+        isFonundInCart.qty += 1;
+    }else
+        cart.push(product);
+        await saveCart(cart);
+        console.log(`${product.name} added to 🛒`);
+};
+ 
+const displayCart = async () =>{
+    const cart = await getCart();
+    if (cart.length == 0){
+        console.log('\n🛒 is empty');
+        return;
+    }
+    console.table(cart);
+    const total = cart.reduce((sum, item) => sum + item.price*item.qty, 0);
+    console.log(`Total payable amount Rs. ${total}`);
+};
+
+const main = async () => {
+    let choice;
+    const cin = readline.createInterface({input: stdin, output: stdout});
+    
+    do{
+    console.log ("Welcome to Amazon Shopping🛒");
+    console.log("1.....Show Cart");
+    console.log("2.....Add Cart");
+    console.log("3......Remove Product");
+    console.log("4......Update Quantity");
+    console.log("5......CheckOut");
+     choice = await cin.question("Enter your choice\n");
+
+    switch (Number(choice)){
+        case 1:
+             displayCart();
+            console.log('Show cart')
+            break;
+        case 2:
+            console.log('add product')  
+            const item = await cin.question('Enter id, name, price, qty')  
+            const [id, name, price, qty] = item.split(',').map((p) => p.trim());
+
+            await addToCart ({
+                id : Number(id),
+                name,
+                price:Number(price),
+                qty: Number(qty),
+            });
+            break;
+        case 3:
+            console.log('remove product')    
+            break;
+        case 4:
+            console.log('update quantity')
+            break;
+        case 5:
+            console.log('Check Out')
+            break;
+            default:
+                console.log()
+
+    }
+
+    }while (choice != 5);
+    cin.close()
+};
+main();
