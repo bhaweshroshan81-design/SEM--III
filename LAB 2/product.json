@@ -1,8 +1,18 @@
 [
   {
-    "id": 201,
-    "name": "Ayush",
-    "price": 99,
-    "qty": 2
+    "id": 111,
+    "name": "HP Laptop",
+    "price": 47000,
+    "qty": 3
+  },
+  {
+    "id": null,
+    "price": null,
+    "qty": null
+  },
+  {
+    "id": null,
+    "price": null,
+    "qty": null
   }
 ]
